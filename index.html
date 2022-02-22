@@ -95,10 +95,14 @@
         let graphGenerator = new Params("images/graphGenerator.png", "https://github.com/MrAlexeiMK/GraphGenerator",
             "GraphGenerator\n\nInterface for generating graph by Stephen Wolfram article 'Finally We May Have a Path to the Fundamental Theory of Physics'",
             25, 200, 100, 1, 1, 4, -0.0005);
+        let spigotmc = new Params("images/moon.png", "https://www.spigotmc.org/members/mralexeimk.132111/#resources",
+            "SpigotMC\n\nMy Spigot API resources with descriptions\nContains BedWars, SkyWars, SkyBlock, BungeeAuth",
+            10, 50, 100, 1, 1, 4, 0.0005);
 
         let anims = [];
 
         addPlanets([objector, chess, graphGenerator]);
+        addMoon();
         addSun();
         addYouTube();
 
@@ -172,6 +176,57 @@
                 };
                 planet.src = params.src;
             }
+        }
+
+        function addMoon() {
+            let planet = new Image();
+            let orbitRadius = Math.sqrt(
+                Math.pow(Math.abs(spigotmc.shiftX) - spigotmc.radius / 2, 2) + Math.pow(Math.abs(spigotmc.shiftY) - spigotmc.radius / 2, 2)
+            );
+            planet.onload = function () {
+                let pl = new Konva.Image({
+                    x: youtubeX + spigotmc.shiftX,
+                    y: youtubeY + spigotmc.shiftY,
+                    image: planet,
+                    width: spigotmc.radius,
+                    height: spigotmc.radius,
+                    visible: false,
+                    perfectDrawEnabled: false,
+                });
+
+                pl.on('mouseenter', function () {
+                    stage.container().style.cursor = 'pointer';
+                    startAllAnims();
+                    showText(spigotmc.lore);
+                    anim.stop();
+                });
+                pl.on('mouseleave', function () {
+                    stage.container().style.cursor = 'default';
+                });
+                pl.on('click', function () {
+                    about.visible(false);
+                    window.open(spigotmc.link);
+                });
+                layer.add(pl);
+
+                let anim = new Konva.Animation(function (frame) {
+                    pl.x(
+                        spigotmc.p1 * orbitRadius * Math.cos(spigotmc.angle * frame.time) + youtubeX
+                    );
+                    pl.y(
+                        spigotmc.p2 * orbitRadius * Math.sin(spigotmc.angle * frame.time) + youtubeY
+                    );
+                    if (!pl.isVisible()) pl.visible(true);
+                    let scale = Math.cos(spigotmc.angle * frame.time) + spigotmc.p3;
+                    pl.scale({
+                        x: scale,
+                        y: scale,
+                    });
+                }, layer);
+                anim.start();
+                anims.push(anim);
+            };
+            planet.src = spigotmc.src;
         }
 
         function addSun() {
