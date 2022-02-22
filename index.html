@@ -21,239 +21,332 @@
 <script src="js/particles.js"></script>
 
 <script>
-    particlesJS.load('konvajs-content', 'assets/particles.json', function() {
-        console.log('callback - particles.js config loaded');
-    });
-    class Params {
-        constructor(src, link, lore, radius, shiftX, shiftY, p1, p2, p3, angle) {
-            this.src = src;
-            this.link = link;
-            this.lore = lore;
-            this.radius = radius;
-            this.shiftX = shiftX;
-            this.shiftY = shiftY;
-            this.p1 = p1;
-            this.p2 = p2;
-            this.p3 = p3;
-            this.angle = angle;
+    const deviceType = () => {
+        const ua = navigator.userAgent;
+        if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+            return "tablet";
         }
-    }
-    let random = function (min, max) {
-        return Math.floor(Math.random() * (max - min + 1) + min);
+        else if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua)) {
+            return "mobile";
+        }
+        return "desktop";
     };
-    let canvas, about, rect;
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-    let sunWidth = 150;
-    let sunHeight = 150;
+    if(deviceType() !== "mobile") {
+        particlesJS.load('konvajs-content', 'assets/particles.json', function () {
+            console.log('callback - particles.js config loaded');
+        });
 
-    let sunX = random(width/2-200, width/2-50), sunY = random(height/2-150, height/2-200);
-
-    sunX += sunWidth/2;
-    sunY += sunHeight/2;
-
-    let stage = new Konva.Stage({
-        container: 'container',
-        width: width-10,
-        height: height-10,
-    });
-
-    let layer = new Konva.Layer();
-    stage.add(layer);
-
-    init();
-    let container = document.getElementsByClassName('konvajs-content');
-    container[0].id = "konvajs-content";
-
-    let chess = new Params("images/chess.png", "https://github.com/MrAlexeiMK/Chess/raw/main/%D0%A8%D0%B0%D1%85%D0%BC%D0%B0%D1%82%D1%8B%20(%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D1%89%D0%B8%D0%BA).msi",
-    "CHESS\n\nChess with Artificial Intelligence",
-        40, -150, -120, 1.5, 1, 3, 0.0015);
-    let objector = new Params("images/objector.png", "https://github.com/MrAlexeiMK/Objector/raw/main/Objector.jar",
-    "Objector\n\nInterface for constructing and training convolutional neural networks",
-        30, 200, 100, 1, 1, -2.5, 0.001);
-    let graphGenerator = new Params("images/graphGenerator.png", "https://github.com/MrAlexeiMK/GraphGenerator/raw/main/GraphGenerator.jar",
-    "GraphGenerator\n\nInterface for generating graph by Stephen Wolfram article",
-    25, 200, 100, 1, 1, 4, -0.0005);
-
-    let anims = [];
-
-    addPlanets([objector, chess, graphGenerator]);
-    addSun();
-
-    function showText(lore) {
-        about.text(lore);
-        about.visible(true);
-        rect.visible(true);
-    }
-
-    function startAllAnims() {
-        about.visible(false);
-        rect.visible(false);
-        for(let j = 0; j < anims.length; ++j) {
-            if(!anims[j].isRunning()) anims[j].start();
+        class Params {
+            constructor(src, link, lore, radius, shiftX, shiftY, p1, p2, p3, angle) {
+                this.src = src;
+                this.link = link;
+                this.lore = lore;
+                this.radius = radius;
+                this.shiftX = shiftX;
+                this.shiftY = shiftY;
+                this.p1 = p1;
+                this.p2 = p2;
+                this.p3 = p3;
+                this.angle = angle;
+            }
         }
-    }
 
-    stage.on('click', function () {
-        startAllAnims();
-    });
+        let random = function (min, max) {
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        };
 
-    function addPlanets(list) {
-        for(let i = 0; i < list.length; ++i) {
-            let params = list[i];
-            let planet = new Image();
-            let orbitRadius = Math.sqrt(
-                Math.pow(Math.abs(params.shiftX)-params.radius/2,2)+Math.pow(Math.abs(params.shiftY)-params.radius/2,2)
-            );
-            planet.onload = function () {
-                let pl = new Konva.Image({
-                    x: sunX+params.shiftX,
-                    y: sunY+params.shiftY,
-                    image: planet,
-                    width: params.radius,
-                    height: params.radius,
-                    visible: false,
+        let canvasSun, canvasEarth;
+        let about, rect;
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+
+        let sunWidth = 200;
+        let sunHeight = 200;
+        let sunX = 900, sunY = 250;
+
+        let youtubeWidth = 130;
+        let youtubeHeight = 130;
+        let youtubeX = 200, youtubeY = 100;
+
+        sunX += sunWidth / 2;
+        sunY += sunHeight / 2;
+        youtubeX += youtubeWidth / 2;
+        youtubeY += youtubeHeight / 2;
+
+        let stage = new Konva.Stage({
+            container: 'container',
+            width: width - 10,
+            height: height - 10,
+        });
+
+        let layer = new Konva.Layer();
+        stage.add(layer);
+
+        init();
+        let container = document.getElementsByClassName('konvajs-content');
+        container[0].id = "konvajs-content";
+
+        let chess = new Params("images/chess.png", "https://github.com/MrAlexeiMK/Chess",
+            "CHESS\n\nChess with Artificial Intelligence\nContains Python server and Web, Android clients. \nSeparate from the server - C++ Windows forms client.",
+            40, -150, -120, 1.5, 1, 3, 0.0015);
+        let objector = new Params("images/objector.png", "https://github.com/MrAlexeiMK/Objector",
+            "Objector\n\nInterface for constructing and training convolutional neural networks. \nMade by articles from arxiv.org.",
+            30, 200, 100, 1, 1, -2.5, 0.001);
+        let graphGenerator = new Params("images/graphGenerator.png", "https://github.com/MrAlexeiMK/GraphGenerator",
+            "GraphGenerator\n\nInterface for generating graph by Stephen Wolfram article 'Finally We May Have a Path to the Fundamental Theory of Physics'",
+            25, 200, 100, 1, 1, 4, -0.0005);
+
+        let anims = [];
+
+        addPlanets([objector, chess, graphGenerator]);
+        addSun();
+        addYouTube();
+
+        function showText(lore) {
+            about.text(lore);
+            about.visible(true);
+            rect.visible(true);
+        }
+
+        function startAllAnims() {
+            about.visible(false);
+            rect.visible(false);
+            for (let j = 0; j < anims.length; ++j) {
+                if (!anims[j].isRunning()) anims[j].start();
+            }
+        }
+
+        stage.on('click', function () {
+            startAllAnims();
+        });
+
+        function addPlanets(list) {
+            for (let i = 0; i < list.length; ++i) {
+                let params = list[i];
+                let planet = new Image();
+                let orbitRadius = Math.sqrt(
+                    Math.pow(Math.abs(params.shiftX) - params.radius / 2, 2) + Math.pow(Math.abs(params.shiftY) - params.radius / 2, 2)
+                );
+                planet.onload = function () {
+                    let pl = new Konva.Image({
+                        x: sunX + params.shiftX,
+                        y: sunY + params.shiftY,
+                        image: planet,
+                        width: params.radius,
+                        height: params.radius,
+                        visible: false,
+                        perfectDrawEnabled: false,
+                    });
+
+                    pl.on('mouseenter', function () {
+                        stage.container().style.cursor = 'pointer';
+                        startAllAnims();
+                        showText(params.lore);
+                        anim.stop();
+                    });
+                    pl.on('mouseleave', function () {
+                        stage.container().style.cursor = 'default';
+                    });
+                    pl.on('click', function () {
+                        about.visible(false);
+                        window.open(params.link);
+                    });
+                    layer.add(pl);
+
+                    let anim = new Konva.Animation(function (frame) {
+                        pl.x(
+                            params.p1 * orbitRadius * Math.cos(params.angle * frame.time) + sunX
+                        );
+                        pl.y(
+                            params.p2 * orbitRadius * Math.sin(params.angle * frame.time) + sunY
+                        );
+                        if (!pl.isVisible()) pl.visible(true);
+                        let scale = Math.cos(params.angle * frame.time) + params.p3;
+                        pl.scale({
+                            x: scale,
+                            y: scale,
+                        });
+                    }, layer);
+                    anim.start();
+                    anims.push(anim);
+                };
+                planet.src = params.src;
+            }
+        }
+
+        function addSun() {
+            let sunObj = new Image();
+            let githubObj = new Image();
+            sunObj.onload = function () {
+                let sun = new Konva.Image({
+                    x: sunX - sunWidth / 2,
+                    y: sunY - sunHeight / 2,
+                    image: canvasSun,
+                    width: sunWidth,
+                    height: sunHeight,
+                    listening: false,
                     perfectDrawEnabled: false,
                 });
 
-                pl.on('mouseenter', function () {
+                let link = new Konva.Image({
+                    x: sunX - 60,
+                    y: sunY - 70,
+                    image: githubObj,
+                    width: 120,
+                    height: 120,
+                    perfectDrawEnabled: false,
+                });
+                link.on('mouseenter', function () {
                     stage.container().style.cursor = 'pointer';
                     startAllAnims();
-                    showText(params.lore);
-                    anim.stop();
                 });
-                pl.on('mouseleave', function () {
+                link.on('mouseleave', function () {
                     stage.container().style.cursor = 'default';
                 });
-                pl.on('click', function () {
-                    about.visible(false);
-                    window.open(params.link);
+                link.on('click', function () {
+                    window.open('https://github.com/MrAlexeiMK');
+                    stage.container().style.cursor = 'default';
                 });
-                layer.add(pl);
 
+                layer.add(sun);
+                layer.add(link);
+
+                let angle = 0.01;
                 let anim = new Konva.Animation(function (frame) {
-                    pl.x(
-                        params.p1*orbitRadius*Math.cos(params.angle*frame.time) + sunX
+                    sun.x(
+                        Math.cos(angle * frame.time) / 10 + sun.getPosition().x
                     );
-                    pl.y(
-                        params.p2*orbitRadius*Math.sin(params.angle*frame.time) + sunY
+                    sun.y(
+                        Math.sin(angle * frame.time) / 5 + sun.getPosition().y
                     );
-                    if(!pl.isVisible()) pl.visible(true);
-                    let scale = Math.cos(params.angle*frame.time)+params.p3;
-                    pl.scale({
-                        x: scale,
-                        y: scale,
-                    });
+                    link.x(
+                        Math.cos(angle * frame.time) / 10 + link.getPosition().x
+                    );
+                    link.y(
+                        Math.sin(angle * frame.time) / 5 + link.getPosition().y
+                    );
                 }, layer);
                 anim.start();
-                anims.push(anim);
             };
-            planet.src = params.src;
+            sunObj.src = 'images/sun.gif';
+            githubObj.src = 'images/github.png';
         }
-    }
 
-    function addSun() {
-        let sunObj = new Image();
-        let githubObj = new Image();
-        sunObj.onload = function () {
-            let sun = new Konva.Image({
-                x: sunX-sunWidth/2,
-                y: sunY-sunHeight/2,
-                image: canvas,
-                width: sunWidth,
-                height: sunHeight,
+        function addYouTube() {
+            let obj = new Image();
+            let youtubeObj = new Image();
+            obj.onload = function () {
+                let youtube = new Konva.Image({
+                    x: youtubeX - youtubeWidth / 2,
+                    y: youtubeY - youtubeHeight / 2,
+                    image: canvasEarth,
+                    width: youtubeWidth,
+                    height: youtubeHeight,
+                    listening: false,
+                    perfectDrawEnabled: false,
+                });
+
+                let link = new Konva.Image({
+                    x: youtubeX - 60,
+                    y: youtubeY - 60,
+                    image: youtubeObj,
+                    width: 120,
+                    height: 120,
+                    perfectDrawEnabled: false,
+                });
+                link.on('mouseenter', function () {
+                    stage.container().style.cursor = 'pointer';
+                    startAllAnims();
+                });
+                link.on('mouseleave', function () {
+                    stage.container().style.cursor = 'default';
+                });
+                link.on('click', function () {
+                    window.open('https://www.youtube.com/channel/UCC4M-40ckU4sroMTxGprBNg');
+                    stage.container().style.cursor = 'default';
+                });
+
+                layer.add(youtube);
+                layer.add(link);
+
+                let angle = 0.01;
+                let anim = new Konva.Animation(function (frame) {
+                    youtube.x(
+                        Math.cos(angle * frame.time) / 10 + youtube.getPosition().x
+                    );
+                    youtube.y(
+                        Math.sin(angle * frame.time) / 5 + youtube.getPosition().y
+                    );
+                    link.x(
+                        Math.cos(angle * frame.time) / 10 + link.getPosition().x
+                    );
+                    link.y(
+                        Math.sin(angle * frame.time) / 5 + link.getPosition().y
+                    );
+                }, layer);
+                anim.start();
+            };
+            obj.src = 'images/earth.gif';
+            youtubeObj.src = 'images/youtube.png';
+        }
+
+        function initCanvas(canvasObj, src) {
+            function onDrawFrameSun(ctx, frame) {
+                canvasObj.width = frame.width;
+                canvasObj.height = frame.height;
+                ctx.drawImage(frame.buffer, 0, 0);
+                layer.draw();
+            }
+
+            gifler(src).frames(canvasObj, onDrawFrameSun);
+        }
+
+        function init() {
+            canvasSun = document.createElement('canvas');
+            canvasEarth = document.createElement('canvas');
+
+            initCanvas(canvasSun, 'images/sun.gif');
+            initCanvas(canvasEarth, 'images/earth.gif');
+
+            about = new Konva.Text({
+                x: width / 2 - 150,
+                y: height - 200,
+                text:
+                    "\n\n\n\n\n\n",
+                fontSize: 18,
+                fontFamily: 'Calibri',
+                fill: '#555',
+                width: 300,
+                padding: 20,
+                align: 'center',
                 listening: false,
+                visible: false,
                 perfectDrawEnabled: false,
             });
-
-            let link = new Konva.Image({
-                x: sunX-60,
-                y: sunY-70,
-                image: githubObj,
-                width: 120,
-                height: 120,
+            rect = new Konva.Rect({
+                x: width / 2 - 150,
+                y: height - 200,
+                stroke: '#555',
+                strokeWidth: 5,
+                fill: '#ddd',
+                width: 300,
+                height: about.height(),
+                shadowColor: 'black',
+                shadowBlur: 10,
+                shadowOffsetX: 10,
+                shadowOffsetY: 10,
+                shadowOpacity: 0.2,
+                cornerRadius: 10,
+                listening: false,
+                visible: false,
                 perfectDrawEnabled: false,
             });
-            link.on('mouseenter', function () {
-                stage.container().style.cursor = 'pointer';
-                startAllAnims();
-            });
-            link.on('mouseleave', function () {
-                stage.container().style.cursor = 'default';
-            });
-            link.on('click', function () {
-                window.open('https://github.com/MrAlexeiMK');
-                stage.container().style.cursor = 'default';
-            });
-
-            layer.add(sun);
-            layer.add(link);
-
-            let angle = 0.01;
-            let anim = new Konva.Animation(function (frame) {
-                sun.x(
-                    Math.cos(angle*frame.time)/10 + sun.getPosition().x
-                );
-                sun.y(
-                    Math.sin(angle*frame.time)/5 + sun.getPosition().y
-                );
-                link.x(
-                    Math.cos(angle*frame.time)/10 + link.getPosition().x
-                );
-                link.y(
-                    Math.sin(angle*frame.time)/5 + link.getPosition().y
-                );
-            }, layer);
-            anim.start();
-        };
-        sunObj.src = 'images/sun.gif';
-        githubObj.src = 'images/github.png';
-    }
-
-    function init() {
-        canvas = document.createElement('canvas');
-        function onDrawFrame(ctx, frame) {
-            canvas.width = frame.width;
-            canvas.height = frame.height;
-            ctx.drawImage(frame.buffer, 0, 0);
-            layer.draw();
+            layer.add(rect);
+            layer.add(about);
         }
-        gifler('images/sun.gif').frames(canvas, onDrawFrame);
-        about = new Konva.Text({
-            x: width/2-150,
-            y: height-200,
-            text:
-                "\n\n\n\n\n\n",
-            fontSize: 18,
-            fontFamily: 'Calibri',
-            fill: '#555',
-            width: 300,
-            padding: 20,
-            align: 'center',
-            listening: false,
-            visible: false,
-            perfectDrawEnabled: false,
-        });
-        rect = new Konva.Rect({
-            x: width/2-150,
-            y: height-200,
-            stroke: '#555',
-            strokeWidth: 5,
-            fill: '#ddd',
-            width: 300,
-            height: about.height(),
-            shadowColor: 'black',
-            shadowBlur: 10,
-            shadowOffsetX: 10,
-            shadowOffsetY: 10,
-            shadowOpacity: 0.2,
-            cornerRadius: 10,
-            listening: false,
-            visible: false,
-            perfectDrawEnabled: false,
-        });
-        layer.add(rect);
-        layer.add(about);
+    }
+    else {
+        alert("Only for PC users");
     }
 </script>
 </body>
