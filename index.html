@@ -66,13 +66,13 @@
     container[0].id = "konvajs-content";
 
     let chess = new Params("images/chess.png", "https://github.com/MrAlexeiMK/Chess/raw/main/%D0%A8%D0%B0%D1%85%D0%BC%D0%B0%D1%82%D1%8B%20(%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D1%89%D0%B8%D0%BA).msi",
-    "CHESS\nChess with Artificial Intelligence",
+    "CHESS\n\nChess with Artificial Intelligence",
         40, -150, -120, 1.5, 1, 3, 0.0015);
     let objector = new Params("images/objector.png", "https://github.com/MrAlexeiMK/Objector/raw/main/Objector.jar",
-    "Objector\nInterface for constructing and training convolutional neural networks",
+    "Objector\n\nInterface for constructing and training convolutional neural networks",
         30, 200, 100, 1, 1, -2.5, 0.001);
     let graphGenerator = new Params("images/graphGenerator.png", "https://github.com/MrAlexeiMK/GraphGenerator/raw/main/GraphGenerator.jar",
-    "GraphGenerator\nInterface for generating graph by Stephen Wolfram article",
+    "GraphGenerator\n\nInterface for generating graph by Stephen Wolfram article",
     25, 200, 100, 1, 1, 4, -0.0005);
 
     let anims = [];
@@ -113,6 +113,7 @@
                     width: params.radius,
                     height: params.radius,
                     visible: false,
+                    perfectDrawEnabled: false,
                 });
 
                 pl.on('mouseenter', function () {
@@ -129,8 +130,6 @@
                     window.open(params.link);
                 });
                 layer.add(pl);
-                layer.add(rect);
-                layer.add(about);
 
                 let anim = new Konva.Animation(function (frame) {
                     pl.x(
@@ -163,6 +162,8 @@
                 image: canvas,
                 width: sunWidth,
                 height: sunHeight,
+                listening: false,
+                perfectDrawEnabled: false,
             });
 
             let link = new Konva.Image({
@@ -171,26 +172,13 @@
                 image: githubObj,
                 width: 120,
                 height: 120,
-            });
-
-            sun.on('mouseenter', function () {
-                stage.container().style.cursor = 'pointer';
-                startAllAnims();
+                perfectDrawEnabled: false,
             });
             link.on('mouseenter', function () {
                 stage.container().style.cursor = 'pointer';
                 startAllAnims();
             });
-
-            sun.on('mouseleave', function () {
-                stage.container().style.cursor = 'default';
-            });
             link.on('mouseleave', function () {
-                stage.container().style.cursor = 'default';
-            });
-
-            sun.on('click', function () {
-                window.open('https://github.com/MrAlexeiMK');
                 stage.container().style.cursor = 'default';
             });
             link.on('click', function () {
@@ -242,7 +230,9 @@
             width: 300,
             padding: 20,
             align: 'center',
+            listening: false,
             visible: false,
+            perfectDrawEnabled: false,
         });
         rect = new Konva.Rect({
             x: width/2-150,
@@ -258,8 +248,12 @@
             shadowOffsetY: 10,
             shadowOpacity: 0.2,
             cornerRadius: 10,
+            listening: false,
             visible: false,
+            perfectDrawEnabled: false,
         });
+        layer.add(rect);
+        layer.add(about);
     }
 </script>
 </body>
