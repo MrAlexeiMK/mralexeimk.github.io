@@ -141,12 +141,31 @@
                         visible: false,
                         perfectDrawEnabled: false,
                     });
+                    let angle = 0.01;
+                    let anim2 = new Konva.Animation(function (frame) {
+                        if (frame.time <= 2000) {
+                            pl.x(
+                                Math.cos(angle * frame.time) / 5 + pl.getPosition().x
+                            );
+                            pl.y(
+                                Math.sin(angle * frame.time) / 5 + pl.getPosition().y
+                            );
+                        }
+                        else {
+                            return false;
+                        }
+                    }, layer);
+                    anim2.frame.time = 2000;
 
                     pl.on('mouseenter', function () {
                         stage.container().style.cursor = 'pointer';
                         startAllAnims();
                         showText(params.lore);
                         anim.stop();
+                        if(anim2.frame.time >= 2000) {
+                            anim2.frame.time = 0;
+                            anim2.start();
+                        }
                     });
                     pl.on('mouseleave', function () {
                         stage.container().style.cursor = 'default';
@@ -193,12 +212,31 @@
                     visible: false,
                     perfectDrawEnabled: false,
                 });
+                let angle = 0.01;
+                let anim2 = new Konva.Animation(function (frame) {
+                    if (frame.time <= 2000) {
+                        pl.x(
+                            Math.cos(angle * frame.time) / 5 + pl.getPosition().x
+                        );
+                        pl.y(
+                            Math.sin(angle * frame.time) / 5 + pl.getPosition().y
+                        );
+                    }
+                    else {
+                        return false;
+                    }
+                }, layer);
+                anim2.frame.time = 2000;
 
                 pl.on('mouseenter', function () {
                     stage.container().style.cursor = 'pointer';
                     startAllAnims();
                     showText(spigotmc.lore);
                     anim.stop();
+                    if(anim2.frame.time >= 2000) {
+                        anim2.frame.time = 0;
+                        anim2.start();
+                    }
                 });
                 pl.on('mouseleave', function () {
                     stage.container().style.cursor = 'default';
