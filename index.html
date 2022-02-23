@@ -55,6 +55,8 @@
             return Math.floor(Math.random() * (max - min + 1) + min);
         };
 
+        let X = 0, Y = 0;
+
         let canvasSun, canvasEarth;
         let about, rect;
         let width = window.innerWidth;
@@ -62,11 +64,11 @@
 
         let sunWidth = 200;
         let sunHeight = 200;
-        let sunX = 900, sunY = 250;
+        let sunX = 0.6*width, sunY = 0.3*height;
 
         let youtubeWidth = 130;
         let youtubeHeight = 130;
-        let youtubeX = 200, youtubeY = 100;
+        let youtubeX = 0.15*width, youtubeY = 0.15*height;
 
         sunX += sunWidth / 2;
         sunY += sunHeight / 2;
@@ -80,10 +82,11 @@
         });
 
         let layer = new Konva.Layer();
-        stage.add(layer);
+        stage.add(layer);;
 
         init();
         let container = document.getElementsByClassName('konvajs-content');
+        document.getElementById('container').setAttribute("onmousemove", "onMove(event)");
         container[0].id = "konvajs-content";
 
         let chess = new Params("images/chess.png", "https://github.com/MrAlexeiMK/Chess",
@@ -123,6 +126,21 @@
         stage.on('click', function () {
             startAllAnims();
         });
+
+        window.onload = function() {
+            document.getElementsByClassName('particles-js-canvas-el')[0].getContext("2d").scale(1.5, 1.5);
+        }
+
+        function onMove(e) {
+            let x = (e.clientX-width)/4.5 - 50;
+            let y = (e.clientY-height)/4.5 - 50;
+            if(x !== undefined && y !== undefined) {
+                let el = document.getElementsByClassName('particles-js-canvas-el')[0].getContext("2d");
+                el.translate(-X, -Y);
+                el.translate(x, y);
+                X = x; Y = y;
+            }
+        }
 
         function addPlanets(list) {
             for (let i = 0; i < list.length; ++i) {
