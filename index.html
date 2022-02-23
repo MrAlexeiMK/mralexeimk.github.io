@@ -32,6 +32,9 @@
         return "desktop";
     };
     if(deviceType() !== "mobile") {
+        let startTime = new Date();
+        let isElapsed = false;
+
         particlesJS.load('konvajs-content', 'assets/particles.json', function () {
             console.log('callback - particles.js config loaded');
         });
@@ -132,13 +135,21 @@
         }
 
         function onMove(e) {
-            let x = (e.clientX-width)/4.5 - 50;
-            let y = (e.clientY-height)/4.5 - 50;
-            if(x !== undefined && y !== undefined) {
-                let el = document.getElementsByClassName('particles-js-canvas-el')[0].getContext("2d");
-                el.translate(-X, -Y);
-                el.translate(x, y);
-                X = x; Y = y;
+            if(!isElapsed) {
+                let endTime = new Date();
+                let timeDiff = endTime - startTime;
+                if (timeDiff >= 200) isElapsed = true;
+            }
+            if(isElapsed) {
+                let x = (e.clientX - width) / 4.5 - 50;
+                let y = (e.clientY - height) / 4.5 - 50;
+                if (x !== undefined && y !== undefined) {
+                    let el = document.getElementsByClassName('particles-js-canvas-el')[0].getContext("2d");
+                    el.translate(-X, -Y);
+                    el.translate(x, y);
+                    X = x;
+                    Y = y;
+                }
             }
         }
 
